@@ -1,0 +1,1525 @@
+{
+  "name": "вб + тг",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://feedbacks-api.wildberries.ru/api/v1/feedbacks",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "isAnswered",
+              "value": "false"
+            },
+            {
+              "name": "take",
+              "value": "10"
+            },
+            {
+              "name": "skip",
+              "value": "0"
+            },
+            {
+              "name": "order",
+              "value": "dateDesc"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1088,
+        -224
+      ],
+      "id": "7e0563b5-c560-4c73-acd4-6fd8225ff06d",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1BgRCaczhNY7zgPk",
+          "name": "вб"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data.feedbacks",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -864,
+        -224
+      ],
+      "id": "115df3a7-a439-48a2-b5bb-5541fd059e91",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.productValuation}}",
+                    "rightValue": 5,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "id": "0aa8b653-4fbf-45bb-9e54-46120d60be6d"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "5"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0867f0e2-248d-409a-9a0c-2709d83161cc",
+                    "leftValue": "={{$json.productValuation}}",
+                    "rightValue": 4,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "4"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "92a5a57b-cd4e-4dd8-89cb-2c710c7b894c",
+                    "leftValue": "={{$json.productValuation}}",
+                    "rightValue": 3,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "3, 2, 1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -640,
+        -240
+      ],
+      "id": "32af36d4-1c27-4f5f-acef-f91fcfa8ccaf",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -240,
+        -448
+      ],
+      "id": "5039c9f2-1d70-4dd4-aa64-eeaf0f9b87f7",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "amount": 6
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        32,
+        -432
+      ],
+      "id": "5c093afb-5b91-42b3-a970-4d30934ca824",
+      "name": "Wait",
+      "webhookId": "36322648-29f2-4aa9-8ce4-ac6dcebe900d"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://feedbacks-api.wildberries.ru/api/v1/feedbacks/answer",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"id\": \"{{ $('Wait').item.json.id }}\",\n  \"text\": \"{{ $json.output }}\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        896,
+        -432
+      ],
+      "id": "61595874-dfd7-4f38-8923-f38b57dacb05",
+      "name": "HTTP Request1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1BgRCaczhNY7zgPk",
+          "name": "вб"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://feedbacks-api.wildberries.ru/api/v1/feedback?id={{ $('Wait').item.json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1136,
+        -432
+      ],
+      "id": "87c3a8e1-000b-4633-a51c-397bcf825b89",
+      "name": "HTTP Request2",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1BgRCaczhNY7zgPk",
+          "name": "вб"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ff3bade3-ffb6-400d-af96-7714327ebbcd",
+              "leftValue": "={{ $json.isAbleSupplierFeedbackValuation === true && ( $json.supplierFeedbackValuation === undefined || $json.supplierFeedbackValuation === null || $json.supplierFeedbackValuation === 0 ) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        48
+      ],
+      "id": "ecefc0ed-0a8f-4ecc-b220-70311bbb4a84",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -416,
+        32
+      ],
+      "id": "0454ace6-42e1-4b0b-9655-6fa927500881",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        272,
+        32
+      ],
+      "id": "746872d1-e441-4200-ad2f-ea22273ce0bb",
+      "name": "Wait1",
+      "webhookId": "36322648-29f2-4aa9-8ce4-ac6dcebe900d"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        512,
+        -192
+      ],
+      "id": "801c7660-94a6-44a8-8418-eea0432cba6d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "E18ITK6KzmZageOn",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0612c6ad-ef1e-4d6d-b594-12c0f3d8868d",
+              "name": "output",
+              "value": "={{ $json.output && $json.output.trim().startsWith('{')     ? (JSON.parse($json.output).response ?? JSON.parse($json.output).answerText ?? JSON.parse($json.output).text)     : $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        -432
+      ],
+      "id": "bd71ee1c-4b03-45b6-95aa-3c342ab36e41",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -240,
+        -224
+      ],
+      "id": "4fa55a32-53f6-422c-9cea-0708177977ca",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "amount": 6
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        48,
+        -208
+      ],
+      "id": "8f3e71d3-0796-4167-aa2a-484649837aaa",
+      "name": "Wait2",
+      "webhookId": "36322648-29f2-4aa9-8ce4-ac6dcebe900d"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://feedbacks-api.wildberries.ru/api/v1/feedbacks/answer",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"id\": \"{{ $('Wait2').item.json.id }}\",\n  \"text\": \"{{ $json.output }}\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        944,
+        -208
+      ],
+      "id": "eae859d7-508e-4823-b98d-0af61b576152",
+      "name": "HTTP Request4",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1BgRCaczhNY7zgPk",
+          "name": "вб"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://feedbacks-api.wildberries.ru/api/v1/feedback?id={{ $('Wait2').item.json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1216,
+        -208
+      ],
+      "id": "49867242-8f7a-44c0-9a6c-25967bb12975",
+      "name": "HTTP Request5",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1BgRCaczhNY7zgPk",
+          "name": "вб"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0612c6ad-ef1e-4d6d-b594-12c0f3d8868d",
+              "name": "output",
+              "value": "={{ $json.output && $json.output.trim().startsWith('{')     ? (JSON.parse($json.output).response ?? JSON.parse($json.output).answerText ?? JSON.parse($json.output).text)     : $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        656,
+        -208
+      ],
+      "id": "b6a56dab-635b-48a9-a9b2-88517988398c",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "url": "https://feedbacks-api.wildberries.ru/api/v1/questions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "isAnswered",
+              "value": "false"
+            },
+            {
+              "name": "take",
+              "value": "8"
+            },
+            {
+              "name": "skip",
+              "value": "0"
+            },
+            {
+              "name": "order",
+              "value": "dateDesc"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -912,
+        592
+      ],
+      "id": "903ca70d-091d-44c8-831c-c6e233524871",
+      "name": "HTTP Request6",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1BgRCaczhNY7zgPk",
+          "name": "вб"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Отзывы"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1696,
+        -256
+      ],
+      "typeVersion": 1,
+      "id": "8cd8ccc7-b9ba-49b2-bf73-61ae50e94af6",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Вопросы\nБаза вопросов"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1536,
+        576
+      ],
+      "typeVersion": 1,
+      "id": "156610c9-527b-44e9-b4be-a2e320adce4c",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Ты — e-agent бренда автозапчастей {{ $json.productDetails.brandName || \"бренда\" }}. Отвечай на отзывы с оценкой 4★.\n\nКонтекст:\nКатегория товаров — автосвет (фары, лампы, светодиоды для автомобилей).\n\nДанные отзыва:\nТекст отзыва: {{ $json.text }}\nИмя автора (если есть): {{ $json.userName || \"\" }}\nПлюсы: {{ $json.pros || \"\" }}\nНедостатки (cons, если есть): {{ $json.cons || \"\" }}\n\nСтиль и требования:\n• 3–4 предложения, на «Вы», без эмодзи и без восклицательных знаков.\n• Начинай с приветсвия по имени (если есть)\n• Название товара и артикулы не упоминай.\n• Поблагодари за отзыв и хорошую оценку.\n• Если указаны плюсы, можешь аккуратно отразить их в тексте (не дословно).\n• Не давай обещаний и не используй призывы к действиям.\n• Не предлагай скидки, подарки, замену, возврат, поддержку, обращения в чат.\n• Избегай канцеляризмов и служебных формулировок: «замечание», «данная ситуация», «инцидент», «принято к сведению», «важное замечание».\n\nЕсли в отзыве или в поле cons упомянуты недостатки, брак или повреждения:\n• Добавь короткое, человеческое сожаление.\n• Добавь нейтральную фразу о внимании к качеству.\n• Не предлагай связаться и не описывай планы по исправлению.\n\nДопустимые формулировки для части с сожалением (вариативно, не дословно):\n• «Нам жаль, что возник такой момент; мы внимательно относимся к качеству и учитываем подобные сигналы.»\n• «Сожалеем по поводу указанного нюанса и благодарим за обратную связь — она помогает в контроле качества.»\n\nЗадача:\nСформируй спокойный, вежливый и развернутый ответ, который выглядит как ответ живого представителя бренда автосвета.\n\nФормат ответа:\nВерни строго одну строку в формате JSON без пояснений и без дополнительного текста.\n\n{\"answerText\":\"<готовый ответ на русском языке>\"}",
+        "options": {
+          "systemMessage": "=Отзыв: \"{{$json.text}}\"\nАвтор: {{$json.userName || 'покупатель'}}\nТовар: {{$json.subjectName || $json.productName || 'товар'}}\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        -208
+      ],
+      "id": "aadd4cdc-da2d-410b-b933-6e4c8760d64a",
+      "name": "для 4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Ты — e-agent бренда автозапчастей {{ $json.productDetails.brandName }}. Отвечай на положительные отзывы с оценкой 5★.\n\nКонтекст:\nКатегория товаров — автосвет (фары, лампы, светодиоды для автомобилей).\n\nДанные отзыва:\nТекст отзыва: {{ $json.text }}\nИмя автора (если есть): {{ $json.userName || \"\" }}\nНедостатки (cons, если есть): {{ $json.cons || \"\" }}\n\nСтиль и требования:\n• 3–4 предложения, на «Вы», без эмодзи и без восклицательных знаков.\n• Начинай с приветсвия по имени (если есть)\n• Название товара и артикулы не упоминай.\n• Не давай обещаний и не используй призывы к действиям.\n• Не предлагай скидки, подарки, замену, возврат, поддержку, обращения в чат.\n• Избегай канцеляризмов и служебных формулировок: «замечание», «данная ситуация», «инцидент», «принято к сведению», «важное замечание».\n\nЕсли в отзыве или в поле cons упомянуты недостатки, брак или повреждения:\n• Добавь короткое, человеческое сожаление.\n• Добавь нейтральную фразу о внимании к качеству.\n• Не предлагай связаться и не описывай планы по исправлению.\n\nДопустимые формулировки для части с сожалением (вариативно, не дословно):\n• «Нам жаль, что возник такой момент; мы внимательно относимся к качеству и учитываем подобные сигналы.»\n• «Сожалеем по поводу указанного нюанса и благодарим за обратную связь — она помогает в контроле качества.»\n\nЗадача:\nСформируй спокойный, вежливый и развернутый ответ, который выглядит как ответ живого представителя бренда автосвета.\n\nФормат ответа:\nВ конце всех ответов добавь по !! знаку. ",
+        "options": {
+          "systemMessage": "=Отзыв: \"{{$json.text}}\"\nПлюсы: {{$json.pros || '—'}}\nМинусы: {{$json.cons || '—'}}\nАвтор: {{$json.userName || 'покупатель'}}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        256,
+        -432
+      ],
+      "id": "7636e74b-70b9-4d1f-9e03-32f74ce47311",
+      "name": "для 5"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Ты — e-agent бренда автосвета {{ $json.productDetails.brandName }}.\nТы отвечаешь на ОТРИЦАТЕЛЬНЫЕ и НЕЙТРАЛЬНЫЕ отзывы с оценкой 1★, 2★ или 3★.\n\nКатегория товара: автомобильные лампы и автосвет.\n\nДанные отзыва:\n— Оценка: {{ $json.productValuation }}\n— Текст отзыва: {{ $json.text }} \n- Плюсы:{{ $json.pros }} \n- Минусы: {{ $json.cons }}\n— Имя автора (если есть): {{ $json.userName || \"\" }}\n\n==================================================\n\nГЛАВНАЯ ЦЕЛЬ ОТВЕТА:\n— Спокойно отреагировать на проблему\n— Показать, что продавец адекватный и готов решить вопрос\n— Корректно направить покупателя на возврат / гарантию\n— НЕ спорить и НЕ доказывать правоту\n\n==================================================\n\nОБЩИЕ ТРЕБОВАНИЯ К ОТВЕТУ:\n• 3–5 предложений\n• На «Вы»\n• Без эмодзи\n• Без восклицательных знаков\n• Без упоминаний «чат», «поддержка», «служба»\n• Без обещаний «разберёмся», «исправим», «улучшим»\n• Без обвинений покупателя\n• Без технических споров\n\n==================================================\n\nСТРОГИЕ ЗАПРЕТЫ:\n— НЕ упоминать артикулы, SKU, номера товаров\n— НЕ писать «обратитесь в чат», «напишите нам»\n— НЕ просить оставить контакт\n— НЕ оправдываться\n— НЕ использовать канцелярит:\n  «данная ситуация», «инцидент», «принято к сведению»\n\n==================================================\n\nЛОГИКА ОТВЕТА (ОБЯЗАТЕЛЬНО):\n\nШАГ 1. Короткое человеческое сожаление  \n(1 предложение, спокойное)\n\nПримеры (вариативно):\n— «Нам жаль, что у Вас возникла такая ситуация с лампами.»\n— «Сожалеем, что товар не оправдал ожиданий.»\n\nШАГ 2. Признание проблемы БЕЗ споров  \n— Если пишут «сгорела», «перегорела», «умерла» → принять как факт  \n— Если «не подошли», «не влезли» → принять как факт  \n— Если «ошибка на приборке», «радио ловит хуже» → принять как факт  \n\nШАГ 3. Корректное направление на возврат по гарантии  \n(обязательно для 1★ и 2★, желательно для 3★)\n\nФормулировка ТОЛЬКО такая по смыслу:\n«В случае неисправности Вы можете оформить возврат по гарантии. Приложите фотографии товара и упаковки, и опишите ситуацию. А также укажите марку Вашей машины, модель, год выпуска. Благодарим за обратную связь.»\n\nШАГ 4. Спокойное завершение  \n— Без призывов\n— Без вопросов\n— Без обещаний\n\n==================================================\n\nСПЕЦИАЛЬНЫЕ СЛУЧАИ:\n\nЕСЛИ В ОТЗЫВЕ ЕСТЬ:\n— «Сгорела через неделю / месяц»\n— «Одна лампа вышла из строя»\n— «Ошибка на панели»\n— «Не работает в автомобиле»\n— «Не подошёл цоколь / не влезла»\n\nТО ОБЯЗАТЕЛЬНО:\n— Указать на возможность возврата\n— Указать на фото / видео\n— НЕ спорить про совместимость\n\n==================================================\n\nПРИМЕРЫ ПРАВИЛЬНЫХ ОТВЕТОВ:\n\n1★ / сгорела:\n«Нам жаль, что лампа вышла из строя в процессе эксплуатации. Подобные случаи рассматриваются по гарантии. Вы можете оформить возврат через маркетплейс, приложив фото лампы и упаковки с описанием ситуации. Благодарим за обратную связь.»\n\n2★ / не подошла:\n«Сожалеем, что лампы не подошли для Вашего автомобиля. В такой ситуации можно оформить возврат через маркетплейс. Пожалуйста, приложите фото товара и упаковки, указав причину. Спасибо за отзыв.»\n\n3★ / сложно установить:\n«Сожалеем что возникли сложности с установкой лампы. Напишите нам в Чат с Продавцом, пожалуйста. Мы обязательно разберемся в ситуации, и найдем решение. Если товар не подошел, то можете оформить возврат по гарантии в личном кабинете. Приложите фотографии товара и упаковки, и опишите ситуацию. Благодарим за обратную связь.»\n\n==================================================\nПравила:\nНИКОГДА не упоминаешь обмен и тд. Только ВСЕГДА возврат\nФОРМАТ ВЫВОДА:\n— Только текст ответа\n— Без markdown\n— Без списков\n— Спокойный, человеческий тон",
+        "options": {
+          "systemMessage": "=ID: {{$json.id}}\nTEXT: {{$json.text}}\nPROS: {{$json.pros || '—'}}\nCONS: {{$json.cons || '—'}}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        32
+      ],
+      "id": "ec5845fa-f66d-469b-a1d8-3127d8d1f8ca",
+      "name": "ответы для жалоб"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://feedbacks-api.wildberries.ru/api/v1/feedbacks/answer",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"id\": \"{{ $('Wait1').item.json.id }}\",\n  \"text\": \"{{ $json.output }}\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1104,
+        32
+      ],
+      "id": "fbee2edf-3ff3-484d-b47a-8712e2ca8a5c",
+      "name": "HTTP Request3",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1BgRCaczhNY7zgPk",
+          "name": "вб"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://feedbacks-api.wildberries.ru/api/v1/feedback?id={{ $('Wait1').item.json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1296,
+        32
+      ],
+      "id": "82456d4f-5046-4ed8-979a-ee3772f5f3cf",
+      "name": "HTTP Request7",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1BgRCaczhNY7zgPk",
+          "name": "вб"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data.questions",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        592
+      ],
+      "id": "9b16bf54-bf55-410d-b38e-66c455bdf5de",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -448,
+        592
+      ],
+      "id": "43e0d9c9-efb4-4bc7-984c-b8542ca6dd17",
+      "name": "Loop Over Items4"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -192,
+        608
+      ],
+      "id": "1499e90b-90cc-4dea-a19e-74507978d9f8",
+      "name": "Wait4",
+      "webhookId": "36322648-29f2-4aa9-8ce4-ac6dcebe900d"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Ты — помощник продавца автомобильных ламп бренда {{ $json.productDetails.brandName }}.\n\nОтвечай кратко, уверенно и по делу, как живой продавец маркетплейса.\nОбращайся на Вы.\nБез эмодзи, без восклицательных знаков, без markdown и без спецсимволов.\n\n--------------------------------\nКОНТЕКСТ\n--------------------------------\n\nВопрос покупателя:\n{{ $json.text }}\n\nТекущий товар:\n{{ $json.productDetails.productName }}\n\nАртикул текущего товара:\n{{ $json.productDetails.nmId }}\n\n--------------------------------\nДОСТУПНЫЕ ИСТОЧНИКИ\n--------------------------------\n\nproducts_db — база товаров, которые реально есть в наличии\n\nqa_history — база ранее данных ответов\n\nfitment_search — tool определения штатных цоколей автомобиля по всем зонам света\n\n--------------------------------\nГЛАВНОЕ ПРАВИЛО\n--------------------------------\n\nНикогда не задавай покупателю уточняющие вопросы.\n\nЭто не чат. Нужно сразу дать готовый ответ.\n\nЕсли данных не хватает, используй результат fitment_search и наиболее вероятный вариант.\n\nНикогда не добавляй информацию, которой нет в вопросе или в данных tools.\n\nНе используй формулировки:\n— не могу\n— не знаю\n— не подтверждено\n— точно не подтверждено\n— однозначно сказать не могу\n\nПокупателю нужен чёткий ответ без рассуждений.\n\n--------------------------------\nПРАВИЛО АВТОМОБИЛЯ\n--------------------------------\n\nНикогда не придумывай автомобиль.\n\nИспользуй автомобиль только если:\n— он указан в вопросе покупателя\n— или он определён через fitment_search\n\nЕсли автомобиль не указан и fitment_search не использовался,\nне упоминай марку или модель автомобиля.\n\n--------------------------------\nКОГДА ИСПОЛЬЗОВАТЬ FITMENT_SEARCH\n--------------------------------\n\nИспользуй fitment_search только если вопрос связан с:\n— подбором лампы\n— совместимостью лампы\n— словами подойдёт ли\n— указанием автомобиля\n— определением цоколя\n— вопросом для чего подходит лампа\n— вопросом куда ставится лампа\n\nНе используй fitment_search если вопрос:\n— про люмены\n— про температуру света\n— про характеристики лампы\n— про проблему работы лампы\n— про установку\n— про возврат или гарантию\n\n--------------------------------\nРАБОТА С FITMENT_SEARCH\n--------------------------------\n\nfitment_search возвращает полный fitment автомобиля по зонам света.\n\nОсновные зоны:\nlow_beam — ближний свет\nhigh_beam — дальний свет\nfog_front — передние противотуманные фары\nfog_rear — задние противотуманные фары\nparking_front — передние габариты\nturn_signal_front — передние поворотники\nturn_signal_rear — задние поворотники\nstop_tail — стоп-сигнал / габариты\nreverse — задний ход\ninterior — салон\nlicense_plate — подсветка номера\ntrunk — багажник\ndrl — дневные ходовые огни\n\n--------------------------------\nОПРЕДЕЛЕНИЕ ТИПА ВОПРОСА\n--------------------------------\n\nСначала определи тип вопроса.\n\n1. Подбор по автомобилю\nЕсли в вопросе есть автомобиль или вопрос подойдёт ли на автомобиль.\nВ этом режиме используй fitment_search и сравнивай нужную зону с текущим товаром.\n\n2. Назначение конкретной лампы\nЕсли покупатель спрашивает:\n— для чего подходит лампа\n— куда ставится лампа\n— подходит ли лампа в ДХО, ПТФ, поворотник, габариты, салон, стоп, задний ход\n— спрашивает про конкретный цоколь\n\nВ этом режиме используй fitment_search и сравнивай цоколь товара со всеми зонами fitment.\n\n3. Технический вопрос\nЕсли вопрос про характеристики, люмены, температуру света, установку, проблему работы, гарантию или возврат.\nВ этом режиме не выполняй подбор автомобиля.\n\n--------------------------------\nОПРЕДЕЛЕНИЕ ЗОНЫ СВЕТА\n--------------------------------\n\nЕсли покупатель указал конкретную зону света:\nиспользуй только её.\n\nЕсли зона света не указана:\nне считай автоматически, что речь идёт о головном свете.\n\nВместо этого:\n— сначала определи полный fitment автомобиля через fitment_search\n— затем сравни цоколь товара или цоколь из вопроса со всеми зонами автомобиля\n— перечисли только те зоны, где этот цоколь действительно совпадает\n\nЕсли совпадение найдено только в одной зоне:\nукажи только эту зону.\n\nЕсли совпадение найдено в нескольких зонах:\nперечисли все подходящие зоны в одном ответе.\n\nЕсли совпадение найдено в ближнем и дальнем свете с одинаковым цоколем:\nнапиши один раз:\nдля ближнего и дальнего света.\n\nЕсли совпадений по зонам нет:\nнапиши, что данный цоколь для этого автомобиля не подходит.\n\n--------------------------------\nПРАВИЛО СРАВНЕНИЯ ПО ВСЕМ ЗОНАМ\n--------------------------------\n\nЕсли покупатель не указал зону света, всегда сравни цоколь товара или цоколь из вопроса со всеми зонами fitment_search.\n\nНе ограничивайся ближним и дальним светом.\n\nПроверяй:\nlow_beam\nhigh_beam\nfog_front\nfog_rear\nparking_front\nturn_signal_front\nturn_signal_rear\nstop_tail\nreverse\ninterior\nlicense_plate\ntrunk\ndrl\n\nВ ответе указывай только те зоны, где найдено точное совпадение цоколя.\n\n--------------------------------\nПРАВИЛО ПОВТОРОВ\n--------------------------------\n\nЕсли один и тот же цоколь используется для ближнего и дальнего света,\nуказывай его только один раз.\n\nПравильно:\nH4 для ближнего и дальнего света.\n\nНеправильно:\nH4 для ближнего и H4 для дальнего.\n\nНе повторяй один и тот же цоколь несколько раз в ответе.\n\n--------------------------------\nПРАВИЛО КОНКРЕТНОЙ ЛАМПЫ\n--------------------------------\n\nЕсли покупатель спрашивает про конкретную лампу или цоколь,\nсравни этот цоколь со всеми зонами из fitment_search.\n\nПеречисляй только те зоны, где этот цоколь действительно совпадает.\n\nНельзя писать:\n— в другие зоны\n— не в фары\n— куда-то ещё\n— может использоваться\n\nНужно писать конкретно:\n— подходит в ДХО\n— подходит в передние противотуманные фары\n— подходит в задние противотуманные фары\n— подходит в передние поворотники\n— подходит в задние поворотники\n— подходит в габариты\n— подходит в стоп-сигнал\n— подходит в задний ход\n— подходит в салон\n— подходит в подсветку номера\n— подходит в багажник\n\nЕсли совпадений несколько — перечисли их через запятую в одном коротком ответе.\n\nПример правильного ответа:\nДля Hyundai Elantra 2019 лампы P21W подходят в ДХО и в задние противотуманные фары.\n\n--------------------------------\nПРАВИЛО ТЕКУЩЕГО ТОВАРА\n--------------------------------\n\nВсегда сначала проверяй текущий товар.\n\nЕсли текущий товар совпадает с нужным цоколем:\nнапиши:\nДа, подойдёт.\n\nУкажи:\n— зону света\n— цоколь\n— артикул товара\n\nЕсли текущий товар не совпадает:\nнапиши:\nНе подойдёт.\n\nУкажи правильный цоколь.\n\nПосле этого подбери товар только из products_db.\n\n--------------------------------\nПРАВИЛО ФОРМУЛИРОВКИ ТОВАРА\n--------------------------------\n\nНикогда не используй фразы:\n— у Вас лампы\n— у Вас цоколь\n— у Вас товар\n— из этой карточки\n\nИспользуй нейтральные формулировки:\n— лампы H7\n— товар H7\n— лампы с цоколем H7\n\n--------------------------------\nПРАВИЛО ТОВАРОВ\n--------------------------------\n\nИспользуй только товары из products_db.\n\nЗапрещено:\n— придумывать товары\n— придумывать артикулы\n— предлагать товары которых нет в базе\n— рекомендовать или называть к покупке лампы, которых нет в ассортименте\n\nЕсли в fitment_search встречаются лампы не из ассортимента, например:\nD5S\nD8S\nHB3\nили другие отсутствующие в products_db,\nне предлагай их как товар.\n\nИх можно упомянуть только как технический факт fitment, если это необходимо для ответа о несовместимости.\n\nНикогда не оформляй такие лампы как рекомендацию, допродажу или подходящий товар.\n\n--------------------------------\nПОДБОР ТОВАРОВ\n--------------------------------\n\nДля каждой нужной зоны выбирай ровно 1 товар из products_db.\n\nЕсли подходящего товара нет:\nукажи нужный цоколь и напиши:\nТакого цоколя сейчас нет в ассортименте.\n\n--------------------------------\nДОПРОДАЖА\n--------------------------------\n\nДопродажа используется только если:\n— автомобиль определён\n— вопрос связан с подбором лампы\n— в products_db есть подходящий дополнительный товар\n\nНе используй допродажу если вопрос:\n— про характеристики\n— про проблему лампы\n— про установку\n— про возврат\n— про гарантию\n— про назначение конкретной лампы без подбора покупки\n\nКатегории допродажи:\nПТФ\nгабариты\nстоп-сигнал\nзадний ход\nповоротники\nсалон\nподсветка номера\nбагажник\nДХО\n\nКатегории должны чередоваться.\n\nФраза допродажи:\nТакже для Вашего авто подойдут наши лампы ЦОКОЛЬ — МЕСТО УСТАНОВКИ, артикул XXXXX.\n\n--------------------------------\nПРАВИЛО P21W / P21/5W\n--------------------------------\n\nЕсли покупатель спрашивает P21W и нужна двухконтактная лампа:\nиспользуй P21/5W.\n\nЕсли покупатель спрашивает P21/5W и нужна одноконтактная лампа:\nиспользуй P21W.\n\nВсегда указывай правильный цоколь и артикул.\n\n--------------------------------\nВОПРОСЫ О ПРОБЛЕМАХ\n--------------------------------\n\nЕсли вопрос связан с проблемой работы лампы\nнапример: лампа то работает, то нет\n\nне выполняй подбор автомобиля.\n\nОтвет должен содержать:\n— возможную причину\n— краткое объяснение\n— рекомендацию проверить контакт или установку\n\n--------------------------------\nПРАВИЛО ВОЗВРАТА\n--------------------------------\n\nЕсли вопрос про возврат или гарантию,\nиспользуй только такую формулировку:\n\nВы можете оформить возврат по гарантии.\nПриложите фотографии товара и упаковки и опишите ситуацию.\nА также укажите марку вашей машины, модель и год выпуска.\nБлагодарим за обратную связь.\n\n--------------------------------\nСТИЛЬ ОТВЕТА\n--------------------------------\n\n1–4 коротких предложения.\n\nСначала приветствие.\n\nПотом сразу ответ по сути.\n\nНе повторяй один и тот же товар и артикул.\n\n--------------------------------\nФИНАЛ\n--------------------------------\n\nВерни обычный текст ответа без markdown и спецсимволов.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        176,
+        608
+      ],
+      "id": "04487e8c-7e4d-4c3a-9042-2c842e792a87",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5.2",
+          "mode": "list",
+          "cachedResultName": "gpt-5.2"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        32,
+        832
+      ],
+      "id": "6fb181be-7e6f-4d07-b871-db8c13b901fa",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "E18ITK6KzmZageOn",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "399647ea-54bd-4a16-86a9-895f7e400b0a",
+              "name": "айди",
+              "value": "={{ $('Wait4').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "f69c70ac-0e74-4549-8506-6c659866cf5e",
+              "name": "вопрос",
+              "value": "={{ $('Wait4').item.json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "3bfc9d6f-7df8-4f39-b09b-0c1e63a88bb1",
+              "name": "ответ",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        768,
+        608
+      ],
+      "id": "c4183afc-e338-4dbd-879f-fefe6fb6d75a",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 20
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1232,
+        592
+      ],
+      "id": "f4f0a982-83ed-4318-985e-392ca5b2cfc4",
+      "name": "вопросы"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1312,
+        -224
+      ],
+      "id": "a9288d27-ed95-4a01-9155-81b4b65b7a38",
+      "name": "отзывы"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1Oi9P6DzWIwoVSEXUiNrJid-AtAzF5k7ctwFF7KbY9TQ/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Лист1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Oi9P6DzWIwoVSEXUiNrJid-AtAzF5k7ctwFF7KbY9TQ/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        496,
+        832
+      ],
+      "id": "f97a34fb-c19b-4e1e-bd69-8cf06c6361c3",
+      "name": "products_db",
+      "credentials": {
+        "googleApi": {
+          "id": "V9JzabuopERIc3g7",
+          "name": "3 епта"
+        }
+      },
+      "notes": "products_db"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1Oi9P6DzWIwoVSEXUiNrJid-AtAzF5k7ctwFF7KbY9TQ/edit?usp=sharing",
+          "__regex": "https:\\/\\/(?:drive|docs)\\.google\\.com(?:\\/.*|)\\/d\\/([0-9a-zA-Z\\-_]+)(?:\\/.*|)"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2048307183,
+          "mode": "list",
+          "cachedResultName": "ВСЕ ВОПРОСЫ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Oi9P6DzWIwoVSEXUiNrJid-AtAzF5k7ctwFF7KbY9TQ/edit#gid=2048307183"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        352,
+        832
+      ],
+      "id": "5cbe05e3-7134-4e3b-976c-23a76cc37977",
+      "name": "qa_history",
+      "credentials": {
+        "googleApi": {
+          "id": "V9JzabuopERIc3g7",
+          "name": "3 епта"
+        }
+      },
+      "notes": "qa_history"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0612c6ad-ef1e-4d6d-b594-12c0f3d8868d",
+              "name": "output",
+              "value": "={{ $json.output && $json.output.trim().startsWith('{')     ? (JSON.parse($json.output).response ?? JSON.parse($json.output).answerText ?? JSON.parse($json.output).text)     : $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        928,
+        32
+      ],
+      "id": "6dd034f4-b653-48d9-ad81-0e3dd0b8f39d",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "https://feedbacks-api.wildberries.ru/api/v1/questions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"id\": \"{{ $json['айди'] }}\",\n  \"state\": \"wbRu\",\n  \"answer\": {\n    \"text\": \"{{ $json['ответ'] }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1040,
+        608
+      ],
+      "id": "0a452b26-8fc1-4848-b3f7-d4adb92b521a",
+      "name": "HTTP Request9",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1BgRCaczhNY7zgPk",
+          "name": "вб"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1Oi9P6DzWIwoVSEXUiNrJid-AtAzF5k7ctwFF7KbY9TQ/edit?usp=sharing",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2048307183,
+          "mode": "list",
+          "cachedResultName": "ВСЕ ВОПРОСЫ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Oi9P6DzWIwoVSEXUiNrJid-AtAzF5k7ctwFF7KbY9TQ/edit#gid=2048307183"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "вопрос": "={{ $('Wait4').item.json.text }}",
+            "ответ": "={{ $json.output }}",
+            "айди": "={{ $('Wait4').item.json.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "айди",
+              "displayName": "айди",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "вопрос",
+              "displayName": "вопрос",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ответ",
+              "displayName": "ответ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1280,
+        608
+      ],
+      "id": "ff6f134d-dbb5-4f71-9435-4e83002c18da",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleApi": {
+          "id": "V9JzabuopERIc3g7",
+          "name": "3 епта"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        608,
+        608
+      ],
+      "id": "9248c659-80cc-4eef-afc1-589da159ecdc",
+      "name": "Wait6",
+      "webhookId": "36322648-29f2-4aa9-8ce4-ac6dcebe900d"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -864,
+        1136
+      ],
+      "id": "e32700c1-3282-411f-8334-9e9b852cb5fd",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "1006165227",
+        "text": "=Вышла ошибочка :(\n\nЗагляни в воркфлоу",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -640,
+        1136
+      ],
+      "id": "f87f2f5b-7147-4602-98b0-487577b2b6f3",
+      "name": "Error",
+      "webhookId": "db36ae3a-1ab9-42cf-a2fa-eabbc8e9800f",
+      "credentials": {
+        "telegramApi": {
+          "id": "l8Sczker3qDKWGvR",
+          "name": "promter"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Этот tool используется для определения цоколей автомобильных ламп по автомобилю.\n\nЛогика работы:\n1. Сначала tool ищет данные только по сайту netuning.ru.\n2. Если на netuning.ru нет нужной марки, модели, года или зоны света, tool автоматически выполняет fallback-поиск по другим открытым источникам в интернете.\n3. При fallback-поиске tool должен искать только данные о штатных цоколях и зонах света автомобиля.\n4. Tool не должен использовать тюнинг, LED-апгрейды, маркетплейсы, форумы без явного fitment, объявления, отзывы и нерелевантные страницы.\n5. Tool не подбирает товары и не рекомендует бренды. Он определяет только цоколи и зоны света.\n\nИспользуй этот tool если:\n— в вопросе клиента есть автомобиль\n— вопрос связан с совместимостью лампы\n— вопрос содержит слова подойдёт ли, какой цоколь, какие лампы, подбор ламп\n\nНа вход tool получает полный вопрос клиента.\n\nTool возвращает JSON с полями:\ncar\nlow_beam\nhigh_beam\nfog_front\nparking_front\nturn_signal_front\nturn_signal_rear\nstop_tail\nreverse\ninterior\ntrunk\nlicense_plate\nnote\n\nЕсли данные найдены не на netuning.ru, обязательно укажи это в поле note.",
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"sonar-pro\",\n  \"temperature\": 0,\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Ты определяешь штатные цоколи автомобильных ламп по автомобилю. Сначала ищи только по сайту netuning.ru. Если на netuning.ru нет нужной марки, модели, года или зоны света, автоматически выполни fallback-поиск по другим открытым источникам. При fallback используй только данные о штатных цоколях автомобиля. Игнорируй тюнинг, LED-апгрейды, маркетплейсы, универсальные лампы без привязки к автомобилю, форумы без точного fitment и нерелевантные страницы. Если найден общий блок ближний / дальний свет, заполни low_beam и high_beam одинаковым значением. Верни только JSON без markdown, без пояснений вне JSON и без лишнего текста.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Вопрос клиента: {{$json.text}}. Нужно определить цоколи ламп автомобиля по зонам света и вернуть только JSON. Если данные найдены не на netuning.ru, обязательно укажи это в note. Если год не указан, всё равно выполни поиск и выбери наиболее вероятный вариант. Если есть неоднозначность по поколениям или диапазонам лет, укажи это в note.\"\n    }\n  ],\n  \"web_search_options\": {\n    \"search_mode\": \"web\",\n    \"search_domain_filter\": [\"netuning.ru\"]\n  },\n  \"response_format\": {\n    \"type\": \"json_schema\",\n    \"json_schema\": {\n      \"name\": \"fitment_full\",\n      \"schema\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"car\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"low_beam\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"high_beam\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"fog_front\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"parking_front\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"turn_signal_front\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"turn_signal_rear\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"stop_tail\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"reverse\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"interior\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"trunk\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"license_plate\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"note\": {\n            \"type\": \"string\"\n          }\n        },\n        \"required\": [\n          \"car\",\n          \"low_beam\",\n          \"high_beam\",\n          \"fog_front\",\n          \"parking_front\",\n          \"turn_signal_front\",\n          \"turn_signal_rear\",\n          \"stop_tail\",\n          \"reverse\",\n          \"interior\",\n          \"trunk\",\n          \"license_plate\",\n          \"note\"\n        ],\n        \"additionalProperties\": false\n      }\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        208,
+        832
+      ],
+      "id": "a1a91061-2c42-40ac-9eab-6ea4f4bb428c",
+      "name": "HTTP Request8",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "RZBr5uYMNmspeoTi",
+          "name": "перп"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "для 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "ответы для жалоб",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "для 5",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "для 4",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "ответы для жалоб",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "для 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request5": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request6": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "для 4": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "для 5": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ответы для жалоб": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request7": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items4": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Wait6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "вопросы": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "отзывы": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "products_db": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "qa_history": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request9": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait6": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request8": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "b84f26d7-5274-48fd-947c-78752b52a6d9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2d77a879fc4984c50cd5495553b3e870b678eec007ab021af10443340cebad68"
+  },
+  "id": "XMWzxFRLhfjjr6nnRjfpn",
+  "tags": []
+}
